@@ -20,12 +20,12 @@ updatedb() {
   done
 
   if [ -z "$CA" ]; then
-    echo "Il faut l'identifiant de l'AC"
+    echo "CA identifier is missing."
     exit 1
   fi
 
   echo "====="
-  echo "Mise à jour de la base de données de l'AC $CA"
+  echo "Updating CA database $CA"
   openssl ca -config conf/$CA.cnf -updatedb
   echo "====="
 }

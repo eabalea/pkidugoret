@@ -18,19 +18,19 @@ cleanca() {
   done
 
   if [ -z "$CA" ]; then
-    echo "Il faut l'identifiant de l'AC"
+    echo "CA identifier is missing."
     exit 1
   fi
 
   echo "====="
-  echo "Nettoyage de l'AC $CA"
+  echo "Cleaning CA $CA"
   rm -rf "database/$CA"
   cd store > /dev/null
   for i in *; do 
     if [ -h "$i" ]; then
       LINKED=`readlink "$i"`
       if [ "$LINKED" = $CA.pem -o "$LINKED" = $CA.crl ]; then
-      # TODO: détecter le cas d'un certificat cross-signé (*-$CA.pem)
+      # TODO: detect cross-signed certificates (*-$CA.pem)
         rm $i
       fi
     fi

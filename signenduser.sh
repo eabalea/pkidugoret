@@ -31,39 +31,31 @@ signenduser() {
   done
 
   if [ -z "$CA" ]; then
-    echo "Il faut l'identifiant de l'AC"
+    echo "CA identifier is missing."
     exit 1
   fi
 
   if [ -z "$ID" ]; then
-    echo "Il faut un identifiant pour ce certificat"
+    echo "User identifier is missing."
     exit 1
   fi
 
-  #if [ -z "$SUBJECTDN" ]; then
-  #  echo "Il faut nommer le certificat"
-  #  exit 1
-  #fi
-
   if [ -z "$REQUEST" ]; then
-    echo "Il faut une requête à signer"
+    echo "Certificate request is missing."
     exit 1
   fi
 
   echo "====="
-  echo "Signature du end-user $ID, ayant pour nom $SUBJECTDN, signée par l'AC $CA"
-  echo "Recopie de la requête" && openssl req -utf8 -in $REQUEST -out users/$CA-$ID.req
+  echo "Signing user certificate request $ID, named $SUBJECTDN, issued by CA $CA"
+  echo "Copying certificate request" && openssl req -utf8 -in $REQUEST -out users/$CA-$ID.req
   SECRETKEY=`od -t x1 -A n database/$CA/private/secretkey | sed 's/ //g' | tr 'a-f' 'A-F'`
   COUNTER=`cat database/$CA/counter`
   echo `expr $COUNTER + 1` > database/$CA/counter
   SERIAL=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   echo $SERIAL > database/$CA/serial
-  #echo "Création du certificat" && openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch -subj "$SUBJECTDN"
-  echo "Création du certificat" && [ -z "$SUBJECTDN" ] && (openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch) || (openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch -subj "$SUBJECTDN")
-  #echo "Création du certificat" && openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch
-  echo "Suppression de la requête inutile" && rm users/$CA-$ID.req
+  echo "Creating certificate" && [ -z "$SUBJECTDN" ] && (openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch) || (openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch -subj "$SUBJECTDN")
+  echo "Deleting certificate request copy" && rm users/$CA-$ID.req
   echo "====="
 }
 
 signenduser "$@"
-

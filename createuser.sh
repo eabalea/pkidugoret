@@ -40,28 +40,28 @@ createenduser() {
   done
 
   if [ -z "$CA" ]; then
-    echo "Il faut l'identifiant de l'AC"
+    echo "CA identifier is missing."
     exit 1
   fi
 
   if [ -z "$ID" ]; then
-    echo "Il faut un identifiant pour ce certificat"
+    echo "User identifier is missing."
     exit 1
   fi
 
   if [ -z "$SUBJECTDN" ]; then
-    echo "Il faut nommer le certificat"
+    echo "User subject name is missing."
     exit 1
   fi
 
   case $KEYTYPE in
     rsa|dsa|ec) ;;
-    *) echo "Mauvais type de clé"; exit 1;;
+    *) echo "Wrong key type."; exit 1;;
   esac
 
   echo "====="
-  echo "Création du end-user $ID, ayant pour nom $SUBJECTDN, signée par l'AC $CA"
-  echo "Génération de la clé privée"
+  echo "Creating end-user $ID, named $SUBJECTDN, issued by CA $CA"
+  echo "Generating user private key"
   case $KEYTYPE in
     rsa) openssl genrsa -out users/$CA-$ID.key $KEYSIZE
          ;;
@@ -70,17 +70,16 @@ createenduser() {
     ec) openssl ecparam -genkey -name $ECURVE -out users/$CA-$ID.key
         ;;
   esac
-  echo "Génération de la requête" && openssl req -utf8 -new -config conf/$CA.cnf -key users/$CA-$ID.key -batch -out users/$CA-$ID.req -subj "$SUBJECTDN"
+  echo "Generating user certificate request" && openssl req -utf8 -new -config conf/$CA.cnf -key users/$CA-$ID.key -batch -out users/$CA-$ID.req -subj "$SUBJECTDN"
   SECRETKEY=`od -t x1 -A n database/$CA/private/secretkey | sed 's/ //g' | tr 'a-f' 'A-F'`
   COUNTER=`cat database/$CA/counter`
   echo `expr $COUNTER + 1` > database/$CA/counter
   SERIAL=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   echo $SERIAL > database/$CA/serial
-  echo "Création du certificat" && openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch
-  echo "Création du PKCS#12" && openssl pkcs12 -export -in users/$CA-$ID.crt -inkey users/$CA-$ID.key -password "pass:$PASSPHRASE" -out users/$CA-$ID.p12 -CApath store -chain
-  echo "Suppression de la requête inutile" && rm users/$CA-$ID.req
+  echo "Creating user certificate" && openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch
+  echo "Creating PKCS#12 object" && openssl pkcs12 -export -in users/$CA-$ID.crt -inkey users/$CA-$ID.key -password "pass:$PASSPHRASE" -out users/$CA-$ID.p12 -CApath store -chain
+  echo "Deleting certificate request" && rm users/$CA-$ID.req
   echo "====="
 }
 
 createenduser "$@"
-

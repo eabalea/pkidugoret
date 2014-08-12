@@ -20,20 +20,19 @@ revokeenduser() {
   done
 
   if [ -z "$CA" ]; then
-    echo "Il faut l'identifiant de l'AC"
+    echo "CA identifier is missing."
     exit 1
   fi
 
   if [ -z "$ID" ]; then
-    echo "Il faut l'identifiant du certificat à révoquer"
+    echo "User identifier is missing."
     exit 1
   fi
 
   echo "====="
-  echo "Révocation du end-user $ID, signé par l'AC $CA"
+  echo "Revoking user $ID, issued by CA $CA"
   openssl ca -utf8 -config conf/$CA.cnf -revoke users/$CA-$ID.crt
   echo "====="
 }
 
 revokeenduser "$@"
-

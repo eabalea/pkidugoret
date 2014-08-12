@@ -28,35 +28,29 @@ signsubca() {
   done
 
   if [ -z "$ISSUERCA" ]; then
-    echo "Il faut l'identifiant de l'AC émettrice"
+    echo "Issuing CA identifier is missing."
     exit 1
   fi
 
   if [ -z "$CA" ]; then
-    echo "Il faut l'identifiant de l'AC"
+    echo "CA identifier is missing."
     exit 1
   fi
 
-  #if [ -z "$SUBJECTDN" ]; then
-  #  echo "Il faut nommer le certificat"
-  #  exit 1
-  #fi
-
   if [ -z "$REQUEST" ]; then
-    echo "Il faut une requête à signer"
+    echo "Certificate request is missing."
     exit 1
   fi
 
   echo "====="
-  echo "Création de l'AC fille $CA, ayant pour nom $SUBJECTDN, signée par l'AC $ISSUERCA"
+  echo "Signing subordinate CA certificate $CA, named $SUBJECTDN, issued by CA $ISSUERCA"
   SECRETKEY=`od -t x1 -A n database/$ISSUERCA/private/secretkey | sed 's/ //g' | tr 'a-f' 'A-F'`
   COUNTER=`cat database/$ISSUERCA/counter`
   echo `expr $COUNTER + 1` > database/$ISSUERCA/counter
   SERIAL=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   echo $SERIAL > database/$ISSUERCA/serial
-  #echo "Création du certificat" && openssl ca -utf8 -config conf/$ISSUERCA.cnf -in database/$CA/careq.pem -days $DAYS -out database/$CA/cacert.pem -extensions v3_subca -batch
-  echo "Création du certificat" && openssl ca -utf8 -config conf/$ISSUERCA.cnf -in $REQUEST -days $DAYS -out store/$ISSUERCA-$CA.pem -extensions v3_subca -batch
-  echo "Mise à jour du store" && cd store && ./hashit.sh $ISSUERCA-$CA.pem
+  echo "Creating certificate" && openssl ca -utf8 -config conf/$ISSUERCA.cnf -in $REQUEST -days $DAYS -out store/$ISSUERCA-$CA.pem -extensions v3_subca -batch
+  echo "Updating store" && cd store && ./hashit.sh $ISSUERCA-$CA.pem
   echo "====="
 }
 

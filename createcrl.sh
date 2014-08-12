@@ -24,15 +24,15 @@ createcrl() {
   done
 
   if [ -z "$CA" ]; then
-    echo "Il faut l'identifiant de l'AC"
+    echo "CA identifier is missing."
     exit 1
   fi
 
   echo "====="
-  echo "Création de la CRL de l'AC $CA, valide pour $DAYS jours"
+  echo "Creating CRL for CA $CA, valid for $DAYS days"
   CRLNUMBER=`cat database/$CA/crlnumber`
   openssl ca -utf8 -config conf/$CA.cnf -crldays $DAYS -gencrl -out database/$CA/crl/$CRLNUMBER.pem
-  echo "Mise à jour du store" && cp database/$CA/crl/$CRLNUMBER.pem store/$CA.crl && if [ $LINK -eq 1 ]; then cd store && ./hashit.sh $CA.crl; fi
+  echo "Updating store" && cp database/$CA/crl/$CRLNUMBER.pem store/$CA.crl && if [ $LINK -eq 1 ]; then cd store && ./hashit.sh $CA.crl; fi
   echo "====="
 }
 
