@@ -1,11 +1,12 @@
 #! /bin/sh
 
 createsubca() {
-  TEMP=`getopt -o i:c:s:t:e:k:d:h --long issuer:,ca:,subject:,keytype:,ecurve:,keysize:,days:,help -n 'createsubca.sh' -- "$@"`
+  TEMP=`getopt -o i:c:s:t:e:k:d:p:h --long issuer:,ca:,subject:,keytype:,ecurve:,keysize:,days:,profile:,help -n 'createsubca.sh' -- "$@"`
   KEYSIZE=2048
   KEYTYPE=rsa
   ECURVE=prime256v1
   DAYS=3650
+  PROFILE=v3_subca
 
   eval set -- "$TEMP"
   while true; do
@@ -17,6 +18,7 @@ createsubca() {
       -e|--ecurve) ECURVE=$2; shift 2;;
       -k|--keysize) KEYSIZE=$2; shift 2;;
       -d|--days) DAYS=$2; shift 2;;
+      -p|--profile) PROFILE=$2; shift 2;;
       -h|--help) echo "Options:"
                  echo "  -i|--issuer <issuerca>"
 		 echo "  -c|--ca <ca>"
@@ -25,6 +27,7 @@ createsubca() {
 		 echo " (-e|--ecurve <curvename>) # default prime256v1"
 		 echo " (-k|--key <keysize>)      # default 2048"
 		 echo " (-d|--days <days>)        # default 3650"
+		 echo " (-p|--profile <profile>)  # default v3_subca"
 		 shift
 		 exit 1
 		 ;;
@@ -72,7 +75,7 @@ createsubca() {
   echo `expr $COUNTER + 1` > database/$ISSUERCA/counter
   SERIAL=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   echo $SERIAL > database/$ISSUERCA/serial
-  echo "Creating CA certificate" && openssl ca -utf8 -config conf/$ISSUERCA.cnf -in database/$CA/careq.pem -days $DAYS -out database/$CA/cacert.pem -extensions v3_subca -batch
+  echo "Creating CA certificate" && openssl ca -utf8 -config conf/$ISSUERCA.cnf -in database/$CA/careq.pem -days $DAYS -out database/$CA/cacert.pem -extensions $PROFILE -batch
   echo "Updating store" && cp database/$CA/cacert.pem store/$ISSUERCA-$CA.pem && cd store && ./hashit.sh $ISSUERCA-$CA.pem
   echo "====="
 }
