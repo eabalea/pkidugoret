@@ -99,10 +99,10 @@ string_mask = utf8only
 
 [ dummy_req_distinguished_name ]
 countryName			= C
-countryName_default		= FR
+countryName_default		= JUNKCOUNTRY
 
 commonName			= CN
-commonName_default		= JUNK CA
+commonName_default		= JUNKCN
 
 [ v3_ca ]
 basicConstraints = critical,CA:true
