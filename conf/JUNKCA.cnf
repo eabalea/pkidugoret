@@ -1,14 +1,14 @@
 # This definition stops the following lines choking if HOME isn't
 # defined.
-HOME			= .
-RANDFILE		= $ENV::HOME/.rnd
-oid_section		= new_oids
+HOME                    = .
+RANDFILE                = $ENV::HOME/.rnd
+oid_section             = new_oids
 CANAME                  = JUNKCA
 
 # To use this configuration file with the "-extfile" option of the
 # "openssl x509" utility, name here the section containing the
 # X.509v3 extensions to use:
-# extensions		= 
+# extensions            =
 # (Alternatively, use a configuration file that has only
 # X.509v3 extensions in its main [= default] section.)
 
@@ -16,80 +16,80 @@ CANAME                  = JUNKCA
 
 ####################################################################
 [ ca ]
-default_ca	= CA_default		# The default ca section
+default_ca      = CA_default            # The default ca section
 
 ####################################################################
 [ CA_default ]
 
-dir		= database/$CANAME	# Where everything is kept
-certs		= $dir/certs		# Where the issued certs are kept
-crl_dir		= $dir/crl		# Where the issued crl are kept
-database	= $dir/index.txt	# database index file.
-unique_subject	= no			# Set to 'no' to allow creation of
-					# several ctificates with same subject.
-new_certs_dir	= $dir/newcerts		# default place for new certs.
+dir             = database/$CANAME      # Where everything is kept
+certs           = $dir/certs            # Where the issued certs are kept
+crl_dir         = $dir/crl              # Where the issued crl are kept
+database        = $dir/index.txt        # database index file.
+unique_subject  = no                    # Set to 'no' to allow creation of
+                                        # several ctificates with same subject.
+new_certs_dir   = $dir/newcerts         # default place for new certs.
 
-certificate	= $dir/cacert.pem 	# The CA certificate
-serial		= $dir/serial 		# The current serial number
-crlnumber	= $dir/crlnumber	# the current crl number
-					# must be commented out to leave a V1 CRL
-crl		= $dir/crl.pem 		# The current CRL
-private_key	= $dir/private/cakey.pem# The private key
-RANDFILE	= $dir/private/.rand	# private random number file
+certificate     = $dir/cacert.pem       # The CA certificate
+serial          = $dir/serial           # The current serial number
+crlnumber       = $dir/crlnumber        # the current crl number
+                                        # must be commented out to leave a V1 CRL
+crl             = $dir/crl.pem          # The current CRL
+private_key     = $dir/private/cakey.pem# The private key
+RANDFILE        = $dir/private/.rand    # private random number file
 
-x509_extensions	= v3_ca		# The extentions to add to the cert
+x509_extensions = v3_ca         # The extentions to add to the cert
 
 # Comment out the following two lines for the "traditional"
 # (and highly broken) format.
-name_opt 	= ca_default		# Subject Name options
-cert_opt 	= ca_default		# Certificate field options
+name_opt        = ca_default            # Subject Name options
+cert_opt        = ca_default            # Certificate field options
 
 # Extension copying option: use with caution.
 # copy_extensions = copy
 
-#email_in_dn	= no
+#email_in_dn    = no
 
 # Extensions to add to a CRL. Note: Netscape communicator chokes on V2 CRLs
 # so this is commented out by default to leave a V1 CRL.
 # crlnumber must also be commented out to leave a V1 CRL.
-crl_extensions	= crl_ext
+crl_extensions  = crl_ext
 
-default_days	= 30			# how long to certify for
-default_crl_days= 30			# how long before next CRL
-default_md	= sha1			# which md to use.
-preserve	= yes			# keep passed DN ordering
+default_days    = 30                    # how long to certify for
+default_crl_days= 30                    # how long before next CRL
+default_md      = sha1                  # which md to use.
+preserve        = yes                   # keep passed DN ordering
 
 # A few difference way of specifying how similar the request should look
 # For type CA, the listed attributes must be the same, and the optional
 # and supplied fields are just that :-)
-policy		= policy_anything
+policy          = policy_anything
 
 # For the 'anything' policy
 # At this point in time, you must list all acceptable 'object'
 # types.
 [ policy_anything ]
-countryName		= optional
-stateOrProvinceName	= optional
-localityName		= optional
-organizationName	= optional
-organizationalUnitName	= optional
-commonName		= supplied
-emailAddress		= optional
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
 
 ####################################################################
 [ req ]
-default_bits		= 2048
-default_keyfile 	= privkey.pem
-distinguished_name	= dummy_req_distinguished_name
-x509_extensions	= v3_ca	# The extentions to add to the self signed cert
+default_bits            = 2048
+default_keyfile         = privkey.pem
+distinguished_name      = dummy_req_distinguished_name
+x509_extensions = v3_ca # The extentions to add to the self signed cert
 
 # Passwords for private keys if not present they will be prompted for
 # input_password = secret
 # output_password = secret
 
-# This sets a mask for permitted string types. There are several options. 
+# This sets a mask for permitted string types. There are several options.
 # default: PrintableString, T61String, BMPString.
-# pkix	 : PrintableString, BMPString.
+# pkix   : PrintableString, BMPString.
 # utf8only: only UTF8Strings.
 # nombstr : PrintableString, T61String (no BMPStrings or UTF8Strings).
 # MASK:XXXX a literal mask value.
@@ -98,11 +98,11 @@ x509_extensions	= v3_ca	# The extentions to add to the self signed cert
 string_mask = utf8only
 
 [ dummy_req_distinguished_name ]
-countryName			= C
-countryName_default		= FR
+countryName                     = C
+countryName_default             = JUNKCOUNTRY
 
-commonName			= CN
-commonName_default		= JUNK CA
+commonName                      = CN
+commonName_default              = JUNKCN
 
 [ v3_ca ]
 basicConstraints = critical,CA:true
