@@ -58,6 +58,10 @@ createenduser() {
     rsa|dsa|ec) ;;
     *) echo "Wrong key type."; exit 1;;
   esac
+  
+    if [ ! -d "users" ]; then
+    mkdir users
+  fi
 
   echo "====="
   echo "Creating end-user $ID, named $SUBJECTDN, issued by CA $CA"
