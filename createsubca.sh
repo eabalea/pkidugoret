@@ -55,6 +55,11 @@ createsubca() {
     rsa|dsa|ec) ;;
     *) echo "Wrong key type"; exit 1;;
   esac
+  
+  # Create Openssl conf specific file
+  cp conf/SUBJUNKCA.cnf conf/SUBJUNKCA.cnf.sed
+  sed -i conf/SUBJUNKCA.cnf.sed -e 's/JUNKCA/'$CA'/g' -e 's/JUNKCOUNTRY/'$COUNTRYCA'/g' -e 's/JUNKCN/'$CNCA'/g'
+  mv conf/SUBJUNKCA.cnf.sed conf/$CA.cnf
 
   echo "====="
   echo "Creating subordinate CA $CA, named $SUBJECTDN, issued by CA $ISSUERCA"
