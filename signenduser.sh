@@ -13,8 +13,8 @@ signenduser() {
       -c|--ca) CA=$2; shift 2;;
       -s|--subject) SUBJECTDN="$2"; shift 2;;
       -d|--days) DAYS=$2; shift 2;;
-      -p|--profile) PROFILE=$2; shift 2;;
       -r|--request) REQUEST=$2; shift 2;;
+      -p|--profile) PROFILE=$2; shift 2;;
       -h|--help) echo "Options:"
                  echo "  -i|--id <id>"
 		 echo "  -c|--ca <ca>"
@@ -53,7 +53,7 @@ signenduser() {
   echo `expr $COUNTER + 1` > database/$CA/counter
   SERIAL=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   echo $SERIAL > database/$CA/serial
-  echo "Creating certificate" && [ -z "$SUBJECTDN" ] && (openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch) || (openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch -subj "$SUBJECTDN")
+  echo "Creating certificate" && [ -z "$SUBJECTDN" ] && (openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch) || (openssl ca -utf8 -multivalue-rdn -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch -subj "$SUBJECTDN")
   echo "Deleting certificate request copy" && rm users/$CA-$ID.req
   echo "====="
 }

@@ -68,7 +68,7 @@ createsubca() {
     ec) openssl ecparam -genkey -name $ECURVE -out database/$CA/private/cakey.pem
         ;;
   esac
-  echo "Generating certificate request" && openssl req -utf8 -new -config conf/$CA.cnf -key database/$CA/private/cakey.pem -batch -out database/$CA/careq.pem -subj "$SUBJECTDN"
+  echo "Generating certificate request" && openssl req -utf8 -multivalue-rdn -new -config conf/$CA.cnf -key database/$CA/private/cakey.pem -batch -out database/$CA/careq.pem -subj "$SUBJECTDN"
   echo "Generating CA secret key" && dd if=/dev/urandom of=database/$CA/private/secretkey bs=1 count=16
   SECRETKEY=`od -t x1 -A n database/$ISSUERCA/private/secretkey | sed 's/ //g' | tr 'a-f' 'A-F'`
   COUNTER=`cat database/$ISSUERCA/counter`

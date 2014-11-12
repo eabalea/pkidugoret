@@ -18,8 +18,8 @@ signsubca() {
       -h|--help) echo "Options:"
                  echo "  -i|--issuer <issuerca>"
 		 echo "  -c|--ca <ca>"
-		 echo "  -s|--subject <subject>"
 		 echo "  -r|--request <request file>"
+		 echo " (-s|--subject <subject>)"
 		 echo " (-d|--days <days>)        # default 3650"
 		 echo " (-p|--profile <profile>)  # default v3_subca"
 		 shift
@@ -52,7 +52,7 @@ signsubca() {
   echo `expr $COUNTER + 1` > database/$ISSUERCA/counter
   SERIAL=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   echo $SERIAL > database/$ISSUERCA/serial
-  echo "Creating certificate" && openssl ca -utf8 -config conf/$ISSUERCA.cnf -in $REQUEST -days $DAYS -out store/$ISSUERCA-$CA.pem -extensions $PROFILE -batch
+  echo "Creating certificate" && [ -z "$SUBJECTDN" ] && (openssl ca -utf8 -config conf/$ISSUERCA.cnf -in $REQUEST -days $DAYS -out store/$ISSUERCA-$CA.pem -extensions $PROFILE -batch) || (openssl ca -utf8 -multivalue-rdn -config conf/$ISSUERCA.cnf -in $REQUEST -days $DAYS -out store/$ISSUERCA-$CA.pem -extensions $PROFILE -batch -subj "$SUBJECTDN")
   echo "Updating store" && cd store && ./hashit.sh $ISSUERCA-$CA.pem
   echo "====="
 }

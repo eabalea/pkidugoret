@@ -76,7 +76,7 @@ createenduser() {
   echo `expr $COUNTER + 1` > database/$CA/counter
   SERIAL=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   echo $SERIAL > database/$CA/serial
-  echo "Creating user certificate" && openssl ca -utf8 -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch
+  echo "Creating user certificate" && openssl ca -utf8 -multivalue-rdn -config conf/$CA.cnf -in users/$CA-$ID.req -days $DAYS -out users/$CA-$ID.crt -extensions $PROFILE -batch
   echo "Creating PKCS#12 object" && openssl pkcs12 -export -in users/$CA-$ID.crt -inkey users/$CA-$ID.key -password "pass:$PASSPHRASE" -out users/$CA-$ID.p12 -CApath store -chain
   echo "Deleting certificate request" && rm users/$CA-$ID.req
   echo "====="
