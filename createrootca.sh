@@ -64,7 +64,7 @@ createrootca() {
   echo `expr $COUNTER + 1` > database/$CA/counter
   SERIALHEX=`echo -n $COUNTER | openssl enc -e -K $SECRETKEY -iv 00000000000000000000000000000000 -aes-128-cbc | od -t x1 -A n | sed 's/ //g' | tr 'a-f' 'A-F'`
   SERIAL=`(echo ibase=16; echo $SERIALHEX) | bc -l`
-  echo "Creating self-signed certificate" && openssl req -utf8 -config conf/$CA.cnf -key database/$CA/private/cakey.pem -extensions v3_ca -x509 -new -out database/$CA/cacert.pem -days $DAYS -batch -subj "$SUBJECTDN" -set_serial $SERIAL
+  echo "Creating self-signed certificate" && openssl req -multivalue-rdn -utf8 -config conf/$CA.cnf -key database/$CA/private/cakey.pem -extensions v3_ca -x509 -new -out database/$CA/cacert.pem -days $DAYS -batch -subj "$SUBJECTDN" -set_serial $SERIAL
   echo "Updating store" && cp database/$CA/cacert.pem store/$CA.pem && cd store && ./hashit.sh $CA.pem
   echo "====="
 }
