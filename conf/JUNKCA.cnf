@@ -82,11 +82,6 @@ string_mask        = utf8only
 # output_password = secret
 
 [ dummy_req_distinguished_name ]
-countryName         = C
-countryName_default = FR
-
-commonName          = CN
-commonName_default  = JUNK CA
 
 [ v3_ca ]
 basicConstraints       = critical,CA:true
