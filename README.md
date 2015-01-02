@@ -8,7 +8,7 @@ Create a ROOT CA
 createrootca.sh script need's a subject string openssl-ed style. 
 Creating a root CA named TEST for the country France with subject o = TEST, OU = PURPOSE, CN = ONLY, createrootca.sh should be launched with the following arguments :
 ```shell
-./createsubca.sh -c TEST -C FR -s "/O=TEST /OU=PURPOSE /CN=ONLY"
+./createrootca.sh -c TEST -C FR -s "/O=TEST /OU=PURPOSE /CN=ONLY"
 ```
 
 Create a SUB CA
