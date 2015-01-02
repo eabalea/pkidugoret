@@ -49,58 +49,6 @@ cert_opt        = ca_default            # Certificate field options
 
 #email_in_dn    = no
 
-saoullabit@sd-29832:~/pkidugoret-master/conf$ more SUBJUNKCA.cnf
-# This definition stops the following lines choking if HOME isn't
-# defined.
-HOME                    = .
-RANDFILE                = $ENV::HOME/.rnd
-oid_section             = new_oids
-CANAME                  = JUNKCA
-
-# To use this configuration file with the "-extfile" option of the
-# "openssl x509" utility, name here the section containing the
-# X.509v3 extensions to use:
-# extensions            =
-# (Alternatively, use a configuration file that has only
-# X.509v3 extensions in its main [= default] section.)
-
-[ new_oids ]
-
-####################################################################
-[ ca ]
-default_ca      = CA_default            # The default ca section
-
-####################################################################
-[ CA_default ]
-
-dir             = database/$CANAME      # Where everything is kept
-certs           = $dir/certs            # Where the issued certs are kept
-crl_dir         = $dir/crl              # Where the issued crl are kept
-database        = $dir/index.txt        # database index file.
-unique_subject  = no                    # Set to 'no' to allow creation of
-                                        # several ctificates with same subject.
-new_certs_dir   = $dir/newcerts         # default place for new certs.
-
-certificate     = $dir/cacert.pem       # The CA certificate
-serial          = $dir/serial           # The current serial number
-crlnumber       = $dir/crlnumber        # the current crl number
-                                        # must be commented out to leave a V1 CRL
-crl             = $dir/crl.pem          # The current CRL
-private_key     = $dir/private/cakey.pem# The private key
-RANDFILE        = $dir/private/.rand    # private random number file
-
-x509_extensions = v3_ca         # The extentions to add to the cert
-
-# Comment out the following two lines for the "traditional"
-# (and highly broken) format.
-name_opt        = ca_default            # Subject Name options
-cert_opt        = ca_default            # Certificate field options
-
-# Extension copying option: use with caution.
-# copy_extensions = copy
-
-#email_in_dn    = no
-
 # Extensions to add to a CRL. Note: Netscape communicator chokes on V2 CRLs
 # so this is commented out by default to leave a V1 CRL.
 # crlnumber must also be commented out to leave a V1 CRL.
