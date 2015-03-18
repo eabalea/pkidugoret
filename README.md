@@ -27,7 +27,7 @@ Creating a user called usertest, issued by the SUBTEST1 CA with the subject o = 
 ./createuser.sh -i usertest -c SUBTEST1 -s "/O=TEST /OU=TEST /CN=usertest1"
 ```
 
-Revoke au user
+Revoke a user
 ==============
 Usertest1 was a bad guys or maybe you screwed somewhere, you need to revoke the certificate, revokeuser.sh should be launched nervously with the following arguments :
 ```shell
@@ -40,6 +40,26 @@ You want the entire world to know that usertest1 was a ~~n~~ ~~asshole~~ bad guy
 ```shell
 ./createcrl.sh -c SUBTEST1 -d 7
 ```
+
+List of certificates profiles
+=============================
+
+CA => v3_ca
+
+SUBCA => v3_subca
+
+User => v3_user 
+
+Server => v3_server
+
+EV. Server => v3_ev_server
+
+OCSP => v3_ocspsigner
+
+TimeStamp => v3_timestamp 
+
+CRL => crl_ext
+
 
 TODO
 ====
