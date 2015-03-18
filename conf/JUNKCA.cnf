@@ -155,5 +155,11 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
 noCheck = ignored
 
+[ v3_timestamp ]
+basicConstraints = CA:true
+extendedKeyUsage = critical, timeStamping
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always
+
 [ crl_ext ]
 authorityKeyIdentifier=keyid:always
