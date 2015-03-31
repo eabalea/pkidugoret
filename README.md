@@ -58,6 +58,8 @@ OCSP => v3_ocspsigner
 
 TimeStamp => v3_timestamp 
 
+Signature and key encipherment => v3_sign_chif
+
 CRL => crl_ext
 
 
