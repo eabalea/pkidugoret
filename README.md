@@ -67,8 +67,8 @@ TODO
 ====
 - Finish README
 - Make tests
-- Frontend ?
-- Buy C41 chemicals for color analog negatives
+- Frontend -> CGI :-)
+~~- Buy C41 chemicals for color analog negatives~~
 
 pkidugoret
 ==========
