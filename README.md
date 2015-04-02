@@ -68,7 +68,7 @@ TODO
 - Finish README
 - Make tests
 - Frontend -> CGI :-)
-~~- Buy C41 chemicals for color analog negatives~~
+- ~~Buy C41 chemicals for color analog negatives~~
 
 pkidugoret
 ==========
