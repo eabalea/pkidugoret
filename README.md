@@ -8,7 +8,7 @@ Create a ROOT CA
 createrootca.sh script need's a subject string openssl-ed style. 
 Creating a root CA named TEST for the country France with subject o = TEST, OU = PURPOSE, CN = ONLY, createrootca.sh should be launched with the following arguments :
 ```shell
-./createrootca.sh -c TEST -C FR -s "/O=TEST /OU=PURPOSE /CN=ONLY"
+./createrootca.sh -c TEST -C FR -s "/O=TEST/OU=PURPOSE/CN=ONLY"
 ```
 
 Create a SUB CA
@@ -16,7 +16,7 @@ Create a SUB CA
 createasubca.sh script need's a subject string openssl-ed style.
 Creating a SUB CA named SUBTEST1 issued by TEST with the subject o = TEST, OU = TEST , CN = TESTSUB1, createasubca.sh should be launched with the following arguments :
 ```shell
-./createsubca.sh -i TEST -c SUBTEST1 -s "/O=TEST /OU=TEST /CN=TESTSUB1"
+./createsubca.sh -i TEST -c SUBTEST1 -s "/O=TEST/OU=PURPOSE/CN=ONLY"
 ```
 
 Create a user
@@ -24,7 +24,7 @@ Create a user
 createuser.sh script need's a subject string openssl-ed style.
 Creating a user called usertest, issued by the SUBTEST1 CA with the subject o = TEST, OU = TEST , CN = usertest1, createuser.sh should be launched with the following arguments :
 ```shell
-./createuser.sh -i usertest -c SUBTEST1 -s "/O=TEST /OU=TEST /CN=usertest1"
+./createuser.sh -i usertest -c SUBTEST1 -s "/O=TEST/OU=PURPOSE/CN=ONLY"
 ```
 
 Revoke a user
@@ -58,7 +58,7 @@ OCSP => v3_ocspsigner
 
 TimeStamp => v3_timestamp 
 
-Signature and key encipherment => v3_sign_chif
+Signature and encipherment => v3_sign_cipher
 
 CRL => crl_ext
 
