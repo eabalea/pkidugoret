@@ -161,9 +161,9 @@ extendedKeyUsage = critical, timeStamping
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid:always
 
-[ v3_sign_cipher ]
+[ v3_Sign_Cipher ]
 basicConstraints = critical, CA:false
-KeyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment, keyAgreement
+KeyUsage = digitalSignature, nonRepudiation, keyEncipherment
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid:always
 
