@@ -24,7 +24,7 @@ Create a user
 createuser.sh script need's a subject string openssl-ed style.
 Creating a user called usertest, issued by the SUBTEST1 CA with the subject o = TEST, OU = TEST , CN = usertest1, createuser.sh should be launched with the following arguments :
 ```shell
-./createuser.sh -i usertest -c SUBTEST1 -s "/O=TEST/OU=PURPOSE/CN=ONLY"
+./createuser.sh -i usertest -c SUBTEST1 -p PROFILE -s "/O=TEST/OU=PURPOSE/CN=ONLY"
 ```
 
 Revoke a user
