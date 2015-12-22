@@ -1,7 +1,7 @@
 #! /bin/sh
 
 createenduser() {
-  TEMP=`getopt -o i:c:s:t:e:k:d:p:h --long id:,ca:,subject:,keytype:,ecurve:keysize:,days:,profile:,passphrase:,help -n 'createuser.sh' -- "$@"`
+  TEMP=`getopt -o i:c:s:t:e:k:d:p:h --long id:,ca:,subject:,keytype:,ecurve:keysize:,days:,profile:,passphrase:,rekey:,help -n 'createuser.sh' -- "$@"`
   KEYSIZE=2048
   KEYTYPE=rsa
   ECURVE=prime256v1
@@ -21,19 +21,21 @@ createenduser() {
       -d|--days) DAYS=$2; shift 2;;
       -p|--profile) PROFILE=$2; shift 2;;
       --passphrase) PASSPHRASE="$2"; shift 2;;
+      --rekey) REKEY="$2"; shift 2;;
       -h|--help) echo "Options:"
                  echo "  -i|--id <id>"
-		 echo "  -c|--ca <ca>"
-		 echo "  -s|--subject <subject>"
-		 echo " (-t|--keytype <algo>)     # default rsa (dsa,ec)"
-		 echo " (-e|--ecurve <curvename>) # default prime256v1"
-		 echo " (-k|--key <keysize>)      # default 2048"
-		 echo " (-d|--days <days>)        # default 30"
-		 echo " (-p|--profile <profile>)  # default v3_user"
-		 echo " (--passphrase <pwd>)      # default 69866640"
-		 shift
-		 exit 1
-		 ;;
+                 echo "  -c|--ca <ca>"
+                 echo "  -s|--subject <subject>"
+                 echo " (-t|--keytype <algo>)     # default rsa (dsa,ec)"
+                 echo " (-e|--ecurve <curvename>) # default prime256v1"
+                 echo " (-k|--key <keysize>)      # default 2048"
+                 echo " (-d|--days <days>)        # default 30"
+                 echo " (-p|--profile <profile>)  # default v3_user"
+                 echo " (--passphrase <pwd>)      # default 69866640"
+                 echo " (--rekey)                 # default false"
+                 shift
+                 exit 1
+                 ;;
       --) shift; break;;
       *) echo "internal error"; exit 1;;
     esac
@@ -58,23 +60,34 @@ createenduser() {
     rsa|dsa|ec) ;;
     *) echo "Wrong key type."; exit 1;;
   esac
-  
+
     if [ ! -d "users" ]; then
     mkdir users
   fi
 
-  echo "====="
-  echo "Creating end-user $ID, named $SUBJECTDN, issued by CA $CA"
-  echo "Generating user private key"
-  case $KEYTYPE in
-    rsa) openssl genrsa -out users/$CA-$ID.key $KEYSIZE
-         ;;
-    dsa) openssl dsaparam -genkey -out users/$CA-$ID.key $KEYSIZE
-         ;;
-    ec) openssl ecparam -genkey -name $ECURVE -out users/$CA-$ID.key
-        ;;
+  case $REKEY in
+    true) rm -rf users/$CA-$ID.key;;
+    false|*) ;;
   esac
-  echo "Generating user certificate request" && openssl req -utf8 -new -config conf/$CA.cnf -key users/$CA-$ID.key -batch -out users/$CA-$ID.req -subj "$SUBJECTDN"
+
+
+  if [ ! -f users/$CA-$ID.key ]; then
+echo users/$CA-$ID.key
+    echo "====="
+    echo "Creating end-user $ID, named $SUBJECTDN, issued by CA $CA"
+    echo "Generating user private key"
+      case $KEYTYPE in
+        rsa) openssl genrsa -out users/$CA-$ID.key $KEYSIZE
+             ;;
+        dsa) openssl dsaparam -genkey -out users/$CA-$ID.key $KEYSIZE
+             ;;
+        ec) openssl ecparam -genkey -name $ECURVE -out users/$CA-$ID.key
+            ;;
+      esac
+    echo "Generating user certificate request" && openssl req -utf8 -new -config conf/$CA.cnf -key users/$CA-$ID.key -batch -out users/$CA-$ID.req -subj "$SUBJECTDN"
+      else
+    echo "Renew without rekey, generates certificate request" && openssl req -new -utf8 -config conf/$CA.cnf -key users/$CA-$ID.key -batch -out users/$CA-$ID.req -subj "$SUBJECTDN"
+  fi
   SECRETKEY=`od -t x1 -A n database/$CA/private/secretkey | sed 's/ //g' | tr 'a-f' 'A-F'`
   COUNTER=`cat database/$CA/counter`
   echo `expr $COUNTER + 1` > database/$CA/counter
