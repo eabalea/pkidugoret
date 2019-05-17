@@ -44,6 +44,11 @@ createrootca() {
     exit 1
   fi
 
+  if [ ! -f conf/$CA.cnf ]; then
+    echo "CA configuration file is missing."
+    exit 1
+  fi
+
   if [ -z "$SUBJECTDN" ]; then
     echo "CA subject name is missing."
     exit 1
