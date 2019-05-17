@@ -1,7 +1,15 @@
 #! /bin/sh
 
 createrootca() {
-  TEMP=`getopt -o c:s:t:e:k:d:h --long ca:,subject:,keytype:,ecurve:,keysize:,days:,help -n 'createrootca.sh' -- "$@"`
+  getopt -T > /dev/null
+  if [ $? -eq 4 ]; then
+    # GNU enhanced getopt is available
+    TEMP=`getopt --option c:s:t:e:k:d:h --long ca:,subject:,keytype:,ecurve:,keysize:,days:,help --name "createrootca.sh" -- "$@"`
+  else
+    # Original getopt is available (no long option names, no whitespace, no sorting)
+    echo "long option and whitespace are not supported with this version of getopt"
+    TEMP=`getopt c:s:t:e:k:d:h "$@"`
+  fi
   KEYSIZE=2048
   KEYTYPE=rsa
   ECURVE=prime256v1
@@ -18,7 +26,7 @@ createrootca() {
       -d|--days) DAYS=$2; shift 2;;
       -h|--help) echo "Options:"
 		 echo "  -c|--ca <ca>"
-		 echo "  -s|--subject <subject>"
+		 echo "  -s|--subject <subject>   # should follow this pattern: /CN=xxxx/O=yyyy/C=ZZ"
 		 echo " (-t|--keytype <algo>)     # default rsa (dsa,ec)"
 		 echo " (-e|--ecurve <curvename>) # default prime256v1"
 		 echo " (-k|--key <keysize>)      # default 2048"
@@ -48,7 +56,7 @@ createrootca() {
 
   echo "====="
   echo "Creating root CA $CA, named $SUBJECTDN"
-  echo "Creating directory structure" && mkdir database/$CA database/$CA/private database/$CA/certs database/$CA/newcerts database/$CA/crl && touch database/$CA/index.txt && echo "01" > database/$CA/crlnumber && echo 1 > database/$CA/counter
+  echo "Creating directory structure" && mkdir -p database/$CA/{private,certs,newcerts,crl} && touch database/$CA/index.txt && echo "01" > database/$CA/crlnumber && echo 1 > database/$CA/counter
   echo "Generating CA private key"
   case $KEYTYPE in
     rsa) openssl genrsa -out database/$CA/private/cakey.pem $KEYSIZE
