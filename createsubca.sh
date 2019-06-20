@@ -1,7 +1,15 @@
 #! /bin/sh
 
 createsubca() {
-  TEMP=`getopt -o i:c:s:t:e:k:d:p:h --long issuer:,ca:,subject:,keytype:,ecurve:,keysize:,days:,profile:,help -n 'createsubca.sh' -- "$@"`
+  getopt -T > /dev/null
+  if [ $? -eq 4 ]; then
+    # GNU enhanced getopt is available
+    TEMP=`getopt --option i:c:s:t:e:k:d:h --long issuer:,ca:,subject:,keytype:,ecurve:,keysize:,days:,help --name "createrootca.sh" -- "$@"`
+  else
+    # Original getopt is available (no long option names, no whitespace, no sorting)
+    echo "long option and whitespace are not supported with this version of getopt"
+    TEMP=`getopt i:c:s:t:e:k:d:h "$@"`
+  fi
   KEYSIZE=2048
   KEYTYPE=rsa
   ECURVE=prime256v1
@@ -22,7 +30,7 @@ createsubca() {
       -h|--help) echo "Options:"
                  echo "  -i|--issuer <issuerca>"
 		 echo "  -c|--ca <ca>"
-		 echo "  -s|--subject <subject>"
+		 echo "  -s|--subject <subject>   # should follow this pattern: /CN=xxxx/O=yyyy/C=ZZ"
 		 echo " (-t|--keytype <algo>)     # default rsa (dsa,ec)"
 		 echo " (-e|--ecurve <curvename>) # default prime256v1"
 		 echo " (-k|--key <keysize>)      # default 2048"
@@ -43,6 +51,11 @@ createsubca() {
 
   if [ -z "$CA" ]; then
     echo "CA identifier is missing."
+    exit 1
+  fi
+
+  if [ ! -f conf/$CA.cnf ]; then
+    echo "CA configuration file is missing."
     exit 1
   fi
 

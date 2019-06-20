@@ -1,7 +1,15 @@
 #! /bin/sh
 
 createenduser() {
-  TEMP=`getopt -o i:c:s:t:e:k:d:p:h --long id:,ca:,subject:,keytype:,ecurve:keysize:,days:,profile:,passphrase:,help -n 'createuser.sh' -- "$@"`
+  getopt -T > /dev/null
+  if [ $? -eq 4 ]; then
+    # GNU enhanced getopt is available
+    TEMP=`getopt --option i:c:s:t:e:k:d:p:a:h --long issuer:,ca:,subject:,keytype:,ecurve:,keysize:,days:,profile:,passphrase:,help --name "$0" -- "$@"`
+  else
+    # Original getopt is available (no long option names, no whitespace, no sorting)
+    echo "long option and whitespace are not supported with this version of getopt"
+    TEMP=`getopt i:c:s:t:e:k:d:p:a:h "$@"`
+  fi
   KEYSIZE=2048
   KEYTYPE=rsa
   ECURVE=prime256v1
@@ -20,7 +28,7 @@ createenduser() {
       -k|--keysize) KEYSIZE=$2; shift 2;;
       -d|--days) DAYS=$2; shift 2;;
       -p|--profile) PROFILE=$2; shift 2;;
-      --passphrase) PASSPHRASE="$2"; shift 2;;
+      -a|--passphrase) PASSPHRASE="$2"; shift 2;;
       -h|--help) echo "Options:"
                  echo "  -i|--id <id>"
 		 echo "  -c|--ca <ca>"
@@ -30,7 +38,7 @@ createenduser() {
 		 echo " (-k|--key <keysize>)      # default 2048"
 		 echo " (-d|--days <days>)        # default 30"
 		 echo " (-p|--profile <profile>)  # default v3_user"
-		 echo " (--passphrase <pwd>)      # default 69866640"
+		 echo " (-a|--passphrase <pwd>)   # default 69866640"
 		 shift
 		 exit 1
 		 ;;
@@ -41,6 +49,11 @@ createenduser() {
 
   if [ -z "$CA" ]; then
     echo "CA identifier is missing."
+    exit 1
+  fi
+
+  if [ ! -f conf/$CA.cnf ]; then
+    echo "CA configuration file is missing."
     exit 1
   fi
 
